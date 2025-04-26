@@ -1,88 +1,51 @@
 <script setup>
-  import { reactive } from "vue";
+import { reactive } from "vue";
+import Cabecalho from "./components/Cabecalho.vue";
+import Formulario from "./components/Formulario.vue";
+import Resultado from "./components/Resultado.vue";
 
-  const estado = reactive({
-    filter: 'all',
-    tarefaTemp: '',
-    tarefas: [
-      {titulo: "Estudar Vue", completed: false},
-      {titulo: "Estudar ES6", completed: false},
-      {titulo: "Estudar CSS", completed: false}
-    ]
-  })
+const estado = reactive({
+  operacoes: {
+    soma: (a, b) => a + b,
+    subtracao: (a, b) => a - b,
+    multiplicacao: (a, b) => a * b,
+    divisao: (a, b) => a / b,
+  },
+  calculo: "soma",
+  numero1: null,
+  numero2: null,
+  resultado: null,
+});
 
-  const cadastraTarefa = () => {
-    const tarefaNova = {
-      titulo: estado.tarefaTemp,
-      completed: false
-    }
+const filtraCalculo = (evento) => {
+  estado.calculo = evento.target.value;
+};
 
-    estado.tarefas.push(tarefaNova)
-    estado.tarefaTemp = ''
+const atualizaNumero1 = (valor) => {
+  estado.numero1 = valor;
+  moduloCalculo();
+};
+
+const atualizaNumero2 = (valor) => {
+  estado.numero2 = valor;
+  moduloCalculo();
+};
+
+const moduloCalculo = () => {
+  const operacao = estado.operacoes[estado.calculo];
+  if (operacao && estado.numero1 !== null && estado.numero2 !== null) {
+    estado.resultado = operacao(Number(estado.numero1), Number(estado.numero2));
   }
-
-  const getTarefasPendentes = () => {
-    return estado.tarefas.filter(tarefas => !tarefas.completed)
-  }
-
-  const getTarefasFinalizadas = () => {
-    return estado.tarefas.filter(tarefas => tarefas.completed)
-  }
-
-  const getTarefasFiltradas = () => {
-    const { filter } = estado;
-
-    switch (filter) {
-      case 'pending':
-        return getTarefasPendentes();
-      case 'completed':
-        return getTarefasFinalizadas();
-      default:
-        return estado.tarefas;
-    }
-  }
-
-
+};
 </script>
 
 <template>
   <div class="container">
-    <header class="p-5 mb-4 mt-4 bg-light rounded-3">
-      <h1>Minhas tarefas</h1>
-      <p>
-        Você possui {{ getTarefasPendentes().length }} tarefas pendetes
-      </p>
-    </header>
-    <form @submit.prevent="cadastraTarefa">
-      <div class="row">
-        <div class="col">
-          <input :value="tarefaTemp" @change="evento => estado.tarefaTemp = evento.target.value" required type="text" class="form-control" placeholder="Digite uma tarefa">
-        </div>
-        <div class="col-md-2">
-          <button type="submit" class="btn btn-primary">Cadastrar</button>
-        </div>
-        <div class="col-md-2">
-          <select @change="evento => estado.filter = evento.target.value" class="form-control">
-            <option value="all">Todas as tarefas</option>
-            <option value="completed">Concluidas</option>
-            <option value="pending">Pendetes</option>
-          </select>
-        </div>
-      </div>
-    </form>
-    <ul class="list-group mt-4">
-      <li class="list-group-item" v-for="tarefas in getTarefasFiltradas()">
-        <input @change="evento => tarefas.completed = evento.target.checked" :checked="tarefas.completed" :id="tarefas.titulo" type="checkbox">
-        <label :class="{done: tarefas.completed === true}" class="ms-3" :for="tarefas.titulo">
-          {{ tarefas.titulo }}
-        </label>
-      </li>
-    </ul>
+    <Cabecalho />
+    <Formulario :moduloCalculo="moduloCalculo" :filtraCalculo="filtraCalculo" :estado1="estado.numero1"
+      :estado2="estado.numero2" @atualiza-numero1="atualizaNumero1" @atualiza-numero2="atualizaNumero2" />
+    <Resultado :estado="estado.resultado" />
   </div>
 </template>
 
-<style scoped>
-  .done {
-    text-decoration: line-through;
-  }
-</style>
+<style scoped></style>
