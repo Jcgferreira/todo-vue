@@ -19,16 +19,17 @@ const estado = reactive({
 
 const filtraCalculo = (evento) => {
   estado.calculo = evento.target.value;
+  moduloCalculo(); // Recalcula o resultado automaticamente ao alterar a operação
 };
 
 const atualizaNumero1 = (valor) => {
   estado.numero1 = valor;
-  moduloCalculo();
+  moduloCalculo(); // Recalcula o resultado ao alterar o número 1
 };
 
 const atualizaNumero2 = (valor) => {
   estado.numero2 = valor;
-  moduloCalculo();
+  moduloCalculo(); // Recalcula o resultado ao alterar o número 2
 };
 
 const moduloCalculo = () => {
@@ -42,8 +43,14 @@ const moduloCalculo = () => {
 <template>
   <div class="container">
     <Cabecalho />
-    <Formulario :moduloCalculo="moduloCalculo" :filtraCalculo="filtraCalculo" :estado1="estado.numero1"
-      :estado2="estado.numero2" @atualiza-numero1="atualizaNumero1" @atualiza-numero2="atualizaNumero2" />
+    <Formulario
+      :moduloCalculo="moduloCalculo"
+      :filtraCalculo="filtraCalculo"
+      :estado1="estado.numero1"
+      :estado2="estado.numero2"
+      @atualiza-numero1="atualizaNumero1"
+      @atualiza-numero2="atualizaNumero2"
+    />
     <Resultado :estado="estado.resultado" />
   </div>
 </template>
