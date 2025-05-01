@@ -4,7 +4,7 @@
 
 <template>
     <div v-if="estado !== null" class="mt-4">
-      <h3>Resultado: {{ props.estado }}</h3>
+      <h3>Resultado é: {{ props.estado }}</h3>
     </div>
 </template>
 
